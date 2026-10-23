@@ -8,6 +8,7 @@ from experiments.protocol.databases import _inspect_database, _query_database
 from experiments.protocol.errors import error_string
 from experiments.protocol.files import _read_code, _read_source, _write_test_file
 from experiments.protocol.messaging import _get_log, _send_chunk, _send_message
+from experiments.protocol.verbatim import _send_verbatim
 from experiments.protocol.records import _resolve_records
 from experiments.protocol.state import _log_event, agent_state
 from experiments.protocol.submissions import _save_final_answer, _submit_verdict
@@ -184,6 +185,8 @@ TOOL_HANDLERS: dict[str, ToolHandler] = {
     "send_message": lambda state, actor, arguments: (
         _send_chunk(state=state, actor=actor, arguments=arguments)
         if state.get("comm_mode") == "chunk-choice"
+        else _send_verbatim(state=state, actor=actor, arguments=arguments)
+        if state.get("comm_mode") == "verbatim"
         else _send_message(
             state=state,
             actor=actor,

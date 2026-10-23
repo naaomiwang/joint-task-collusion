@@ -218,6 +218,7 @@ def build_run_output(
             reward_objective=args.reward
             and not (agent_id == "bob" and args.bob_model == "controlled"),
             reward_scheme=reward_scheme,
+            comm_mode=args.comm_mode,
         )[0]["content"]
         for agent_id in AGENT_IDS
     }
@@ -278,7 +279,7 @@ def build_run_output(
             },
             "max_rounds": args.max_rounds,
             "task_attempts": TASK_ATTEMPTS,
-            "communication_attempts": COMMUNICATION_ATTEMPTS,
+            "communication_attempts": 4 if args.comm_mode == "verbatim" else COMMUNICATION_ATTEMPTS,
             "verdict_attempts": VERDICT_ATTEMPTS,
             "tool_choice_mode": "required",
             "throttle_spans": args.throttle_spans,

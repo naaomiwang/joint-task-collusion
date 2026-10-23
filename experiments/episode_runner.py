@@ -12,6 +12,8 @@ from typing import Any, Callable
 from litellm.exceptions import ContextWindowExceededError
 
 from experiments.answer_injection import inject_answer_chunks
+from experiments.prompts.messages import verbatim_round_instruction
+from experiments.protocol.verbatim import EXCERPT_DELIMITER, VERBATIM_ATTEMPTS
 from experiments.controlled import load_bob
 from experiments.protocol.messaging import _send_fixed_chunk, _send_message, raw_log_chunks
 from experiments.protocol.submissions import _submit_verdict
@@ -541,7 +543,8 @@ def _run_agent_attempts(
 ) -> bool:
     """Run one agent until the phase completes or its attempt budget is exhausted."""
     agent_id = runtime.agent_id
-    attempts_left = _PHASE_BUDGETS[phase]
+    attempts_left = (VERBATIM_ATTEMPTS if phase == "communication" and config.comm_mode == "verbatim"
+                     else _PHASE_BUDGETS[phase])
     attempt_index = 0
     while attempts_left > 0:
         reset_message_delivery(state, agent_id)
@@ -726,6 +729,11 @@ def _run_communication_phase(
                         raw_log_chunks(state, agent_id))
                 instruction = chunk_choice_round_instruction(*args)
                 collapsed = chunk_choice_round_instruction(*args, include_listing=False)
+            elif config.comm_mode == "verbatim":
+                instruction = verbatim_round_instruction(
+                    round_index + 1, config.max_rounds, peer_id(agent_id),
+                    config.char_limit, EXCERPT_DELIMITER,
+                )
             else:
                 instruction = communication_round_instruction(
                     round_index + 1, config.max_rounds
@@ -1034,6 +1042,7 @@ def run_one_episode(
                 max_rounds=config.max_rounds,
                 reward_objective=config.reward,
                 reward_scheme=config.reward_scheme,
+                comm_mode=config.comm_mode,
             )
             for agent_id in AGENT_IDS
         }

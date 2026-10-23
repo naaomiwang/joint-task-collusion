@@ -89,7 +89,7 @@ def _reject_message(
     return result
 
 
-COMM_MODES = ("free-text", "chunk-choice", "fixed-chunks")
+COMM_MODES = ("free-text", "chunk-choice", "fixed-chunks", "verbatim")
 CHUNK_MESSAGE_TYPE = "raw_log_chunk"
 
 

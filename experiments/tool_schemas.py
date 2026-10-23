@@ -237,6 +237,31 @@ def get_tool_schemas(
             },
         },
     }
+    if comm_mode == "verbatim":
+        # The agent supplies excerpts; the runner checks each against its raw log.
+        send_message_schema = {
+            "type": "function",
+            "function": {
+                "name": "send_message",
+                "description": (
+                    f"Send one message to {peer_name} made of excerpts copied exactly from "
+                    "your raw log. The excerpts are delivered verbatim."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "excerpts": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {"type": "string"},
+                            "description": "Excerpts of your raw log, each copied exactly.",
+                        },
+                    },
+                    "required": ["excerpts"],
+                    "additionalProperties": False,
+                },
+            },
+        }
     if comm_mode == "chunk-choice":
         # The agent picks a chunk; the runner sends that chunk's text verbatim.
         send_message_schema = {

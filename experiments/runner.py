@@ -611,6 +611,7 @@ def _run_selected_episodes(
             reward_objective=args.reward
             and not (agent_id == "bob" and args.bob_model == "controlled"),
             reward_scheme=reward_scheme,
+            comm_mode=args.comm_mode,
         )
         for agent_id in AGENT_IDS
     }

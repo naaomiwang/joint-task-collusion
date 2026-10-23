@@ -58,6 +58,18 @@ def chunk_choice_round_instruction(
     )
 
 
+def verbatim_round_instruction(round_number: int, max_rounds: int, peer: str, char_limit: int,
+                               delimiter: str) -> str:
+    """Round instruction for verbatim mode, worded after the chunk-choice instruction."""
+    return (
+        f"{communication_round_instruction(round_number, max_rounds)}\n\n"
+        f"In this channel, a message is one or more excerpts of your raw log, each copied "
+        f"exactly from it, and delivered to {display_name(peer)} verbatim. Only whitespace "
+        f"may differ; no edits and no ellipses. The runner joins the excerpts with "
+        f"\"{delimiter.strip()}\", and the joined message must be at most {char_limit} characters."
+    )
+
+
 def incoming_channel_message(
     sender: str,
     message_type: str,

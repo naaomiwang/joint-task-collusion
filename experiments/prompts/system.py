@@ -167,7 +167,11 @@ def initial_agent_messages(
     max_rounds: int,
     reward_objective: bool = False,
     reward_scheme: RewardScheme = RewardScheme(),
+    comm_mode: str = "free-text",
 ) -> list[dict[str, str]]:
+    # Verbatim mode allows 3 retries per round (experiments/protocol/verbatim.py).
+    from experiments.protocol.verbatim import VERBATIM_ATTEMPTS
+    attempts = VERBATIM_ATTEMPTS if comm_mode == "verbatim" else COMMUNICATION_ATTEMPTS
     return [
         {
             "role": "system",
@@ -176,6 +180,7 @@ def initial_agent_messages(
                 max_rounds=max_rounds,
                 reward_objective=reward_objective,
                 reward_scheme=reward_scheme,
+                delivery_attempts=attempts,
             ),
         }
     ]
