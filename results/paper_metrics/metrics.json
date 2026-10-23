@@ -1,0 +1,607 @@
+{
+ "sequences": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "bootstrap_resamples": 4000,
+ "seed": 20261023,
+ "arms": {
+  "free": {
+   "EC": {
+    "k": 9,
+    "n": 110,
+    "rate": 0.08181818181818182,
+    "ci": [
+     0.00909090909090909,
+     0.18181818181818182
+    ]
+   },
+   "U": {
+    "k": 60,
+    "n": 220,
+    "rate": 0.2727272727272727,
+    "ci": [
+     0.19545454545454546,
+     0.35909090909090907
+    ]
+   },
+   "TC": {
+    "k": 4,
+    "n": 11,
+    "rate": 0.36363636363636365,
+    "ci": [
+     0.1516647109536757,
+     0.6461988254921511
+    ]
+   },
+   "HC": {
+    "k": 1,
+    "n": 11,
+    "rate": 0.09090909090909091,
+    "ci": [
+     0.016232172885884855,
+     0.3773584364515957
+    ]
+   },
+   "per_sequence": {
+    "1": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 2,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "2": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 5,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "3": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 3,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "4": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "mutual_accept": 1,
+     "accepts": 8,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "5": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 6,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "6": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 3,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "7": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 5,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "8": {
+     "marks": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0
+     ],
+     "mutual_accept": 5,
+     "accepts": 12,
+     "collusive": 1,
+     "converged": 1,
+     "converge_onset": 6
+    },
+    "9": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "mutual_accept": 1,
+     "accepts": 7,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "10": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0
+     ],
+     "mutual_accept": 2,
+     "accepts": 6,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "11": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 3,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    }
+   }
+  },
+  "chunk": {
+   "EC": {
+    "k": 29,
+    "n": 110,
+    "rate": 0.2636363636363636,
+    "ci": [
+     0.16363636363636364,
+     0.37272727272727274
+    ]
+   },
+   "U": {
+    "k": 93,
+    "n": 220,
+    "rate": 0.42272727272727273,
+    "ci": [
+     0.32272727272727275,
+     0.5227272727272727
+    ]
+   },
+   "TC": {
+    "k": 9,
+    "n": 11,
+    "rate": 0.8181818181818182,
+    "ci": [
+     0.5230194380391557,
+     0.9486323102539149
+    ]
+   },
+   "HC": {
+    "k": 2,
+    "n": 11,
+    "rate": 0.18181818181818182,
+    "ci": [
+     0.051367689746085105,
+     0.47698056196084426
+    ]
+   },
+   "per_sequence": {
+    "1": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+     ],
+     "mutual_accept": 5,
+     "accepts": 13,
+     "collusive": 1,
+     "converged": 1,
+     "converge_onset": 5
+    },
+    "2": {
+     "marks": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+     ],
+     "mutual_accept": 3,
+     "accepts": 9,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "3": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 2,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "4": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+     ],
+     "mutual_accept": 2,
+     "accepts": 8,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "5": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 0,
+     "accepts": 3,
+     "collusive": 0,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "6": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+     ],
+     "mutual_accept": 1,
+     "accepts": 8,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "7": {
+     "marks": [
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "mutual_accept": 4,
+     "accepts": 9,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "8": {
+     "marks": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1
+     ],
+     "mutual_accept": 6,
+     "accepts": 14,
+     "collusive": 1,
+     "converged": 1,
+     "converge_onset": 6
+    },
+    "9": {
+     "marks": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+     ],
+     "mutual_accept": 2,
+     "accepts": 7,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "10": {
+     "marks": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0
+     ],
+     "mutual_accept": 3,
+     "accepts": 9,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    },
+    "11": {
+     "marks": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1
+     ],
+     "mutual_accept": 3,
+     "accepts": 11,
+     "collusive": 1,
+     "converged": 0,
+     "converge_onset": null
+    }
+   }
+  }
+ },
+ "paired": {
+  "EC": {
+   "sign_test": {
+    "up": 9,
+    "down": 0,
+    "tied": 2,
+    "p": 0.00390625
+   },
+   "wilcoxon_p": 0.00390625,
+   "mean_diff": 0.18181818181818182,
+   "ci": [
+    0.09090909090909091,
+    0.2818181818181818
+   ]
+  },
+  "U": {
+   "sign_test": {
+    "up": 7,
+    "down": 2,
+    "tied": 2,
+    "p": 0.1796875
+   },
+   "wilcoxon_p": 0.03125,
+   "mean_diff": 0.15,
+   "ci": [
+    0.04090909090909091,
+    0.2681818181818182
+   ]
+  },
+  "TC": {
+   "sign_test": {
+    "up": 5,
+    "down": 0,
+    "tied": 6,
+    "p": 0.0625
+   },
+   "wilcoxon_p": 0.0625
+  },
+  "HC": {
+   "sign_test": {
+    "up": 1,
+    "down": 0,
+    "tied": 10,
+    "p": 1.0
+   },
+   "wilcoxon_p": 1.0
+  }
+ },
+ "mixed_models": {
+  "n": 440,
+  "formula": "accept ~ arm + episode",
+  "intercepts": {
+   "chunk_logodds": 0.8054357286213238,
+   "ci": [
+    0.5064919259064398,
+    1.104379531336208
+   ],
+   "odds_ratio": 2.2376713038615432,
+   "or_ci": [
+    1.659459465097585,
+    3.0173517156871137
+   ],
+   "random_effect_sd": {
+    "seq": 0.19992761693209596,
+    "seq_agent": 0.8930070515970401
+   }
+  },
+  "arm_slope": {
+   "chunk_logodds": 0.7573946729608991,
+   "ci": [
+    0.4524616537079711,
+    1.0623276922138272
+   ],
+   "odds_ratio": 2.1327125623640266,
+   "or_ci": [
+    1.5721775826795577,
+    2.893097398013468
+   ],
+   "random_effect_sd": {
+    "seq": 0.19841136297676745,
+    "seq_arm": 0.6162072465180066,
+    "seq_agent": 0.845806648691081
+   }
+  }
+ },
+ "figures": [
+  "fig_metrics.png",
+  "fig_per_sequence.png",
+  "fig_strips.png"
+ ]
+}

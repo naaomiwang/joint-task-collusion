@@ -13,7 +13,7 @@
 | 2 | Verbatim arm behind `--comm-mode verbatim`; tests (23 pass); mock dry run `results/luna_extension/dry_run_arms.md` | done | see git log |
 | 3 | Pre-registration `results/luna_extension/PLAN.md`, `run_plan.json`, `cost_estimate.md`; manifests `task/task_sequences_luna15/` | done | see git log |
 | 4 | Analysis script `analysis/final/run_all.py`; test output `results/luna_extension/test_output/` (stand-ins; reproduces EC 9/110 vs 29/110) | done | see git log |
-| 5 | Run scripts `scripts/launch_extension.sh`, `scripts/status.sh`; resume paragraph | pending | |
+| 5 | Run scripts `scripts/launch_extension.sh` (+ `extension_driver.py`), `scripts/status.sh` (+ `status.py`); resume paragraph (Section 9) | done | see git log |
 | 6 | **User's explicit OK** to launch | waiting | |
 | 7 | Launch (detached), monitor with `scripts/status.sh`, no peeking at outcomes | not started | |
 | 8 | Run `analysis/final/run_all.py` → `results/PAPER_RESULTS.md` | not started | |
@@ -35,8 +35,8 @@ Written 2026-10-23 for an agent with no prior context. Repo: `C:\Users\naomi\joi
    paid LLM judges (always pass `--no-judge`; an earlier judge run spent ~$0.19 against the
    user's wishes).
 3. **Budgets:** the original chunk-choice study is closed (~$8.87 of its $10 cap was spent).
-   The follow-up has **$0.50 for the smoke test** and **up to $10 for the main run**, both
-   approved. Nothing else is approved.
+   The answer-injection follow-up is cancelled (smoke spent $0.3996). The **Luna extension has a
+   hard cap of $24** across all attempts, but **its launch still needs the user's explicit OK**.
 4. **Read-only on data:** never modify raw `run.json` files or transcripts. Scripts go in
    `analysis/`, outputs in `results/`. Don't overwrite existing outputs (new folders).
 5. **Report numbers as counts (x/n)**, not just percentages. Label anything not pre-registered
@@ -293,3 +293,52 @@ spend (sum of `cost_usd` in the output tree's `llm_usage.jsonl`) reaches the cap
 6. Optional (needs user approval): apply the deck corrections from `results/SYNTHESIS.md`
    (iii); commit the untracked analyses and `task/task_sequences_25x10/`; extension runs
    (DeepSeek/Gemini/Luna) are costed in `results/paper_metrics/COSTS.md` and not approved.
+
+
+---
+
+## 9. Approved experiments still to run
+
+### 9.1 Answer-injection follow-up — CANCELLED (2026-10-24)
+
+Branch `followup-answer-injection` (commits `1c844b4` harness/config/plan/assignments, `6d568e1`
+n = 20 amendment, `92d0aed` sensitivity analyses). Design: free text, each judge-episode
+randomized to none / V (partner's answer chunk labelled verbatim raw log) / E (same chunk
+labelled evidence); flag `--answer-injection-seed`; config `configs/followup_answer_injection.yaml`;
+pre-registration `results/followup/PLAN.md` + `assignments.csv`. Smoke test finished (1 sequence,
+exit 0, $0.3996; output `results/followup/smoke/`, never analysed). **Do not run anything from it.**
+
+### 9.2 Luna extension — prepared, awaiting the user's explicit OK
+
+- **Branch** `luna-extension`. Pre-registration `results/luna_extension/PLAN.md`; run order
+  `results/luna_extension/run_plan.json`; cost `results/luna_extension/cost_estimate.md`
+  (expected $17.72, range $14.12–$21.38); manifests `task/task_sequences_luna15/` (1–11 copied
+  unchanged, 12–15 sampled by `analysis/final/sample_sequences.py`, seeds
+  `task-sequence-luna15:012`–`015`).
+- **Runs (33):** free text and chunks for sequences 1–5 and 12–15; verbatim
+  (`--comm-mode verbatim`, `experiments/protocol/verbatim.py`) for 1–15. Existing 6–11 free-text
+  and chunk runs (`results/l/f`, `results/l/c`) are reused. Outputs `results/x/{f,c,v}`;
+  incomplete attempts are moved to `results/xa/`.
+- **Primary:** EC, chunks vs free, verbatim vs free, verbatim vs chunks; per-sequence exact sign
+  test + Wilcoxon; Holm across the three. Secondary, exploratory (a)–(e) and supplementary as in
+  PLAN.md. Analysis: `analysis/final/run_all.py` (fixed before data) → `results/PAPER_RESULTS.md`.
+- **Safeguards (driver):** hard cap $24 incl. previous attempts; refuses to start if the estimate
+  exceeds the cap or OpenRouter's canonical slug for `openai/gpt-6-luna` is not
+  `openai/gpt-6-luna-20260922`; stops if a run reports a response model/provider other than
+  `openai/gpt-6-luna` / `OpenAI`; one driver at a time (`results/luna_extension/driver.pid`).
+- **No peeking:** don't open `run.json` verdicts or compute any outcome until all 33 runs finish;
+  use only `scripts/status.sh`.
+
+**Instruction for a new agent (check status, resume, analyse):** From the repo root in Git Bash
+on branch `luna-extension`, run `bash scripts/status.sh` to see runs completed/remaining, any
+partial run, spend (cap $24) and whether the driver is alive; it never shows outcomes. If the
+driver is not running and runs remain, confirm the user has given explicit OK for the extension,
+check `env | cut -d= -f1 | grep -iE "api_key|openrouter|openai"` prints nothing, then run
+`bash scripts/launch_extension.sh` (detached; skips finished runs, sets aside and restarts any
+half-finished run, counts its spend); `bash scripts/launch_extension.sh --plan-only` shows what
+it would do without calling the model. Follow progress in `results/luna_extension/run.log` (per-run
+runner logs `results/luna_extension/runner_<arm><seq>.log`); driver exit codes: 2 refused, 3 cap,
+4 model changed, 5 run failed, 6 already running. When `status.sh` reports 33/33 completed, run
+`PYTHONUTF8=1 python analysis/final/run_all.py` (system python, which has pandas) to write
+`results/PAPER_RESULTS.md` (pre-registered first, exploratory labelled), then commit it and update
+the checklist at the top of this file.

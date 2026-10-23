@@ -1,0 +1,225 @@
+{
+ "prices_per_million": {
+  "deepseek_list": [
+   0.3,
+   0.006,
+   1.2
+  ],
+  "gemini_list": [
+   0.25,
+   0.025,
+   1.5
+  ],
+  "luna_list": [
+   0.1,
+   0.01,
+   0.5
+  ]
+ },
+ "luna_per_sequence": {
+  "free": {
+   "mean": 0.37734483333333335,
+   "min": 0.320294,
+   "max": 0.425638,
+   "n": 6
+  },
+  "chunk": {
+   "mean": 0.8074036666666666,
+   "min": 0.715812,
+   "max": 0.883827,
+   "n": 6
+  }
+ },
+ "deepseek_per_sequence": {
+  "free_billed": 0.54878,
+  "chunk_billed_5_episodes": 0.334829,
+  "chunk_billed_extrapolated": 1.1618918495202484,
+  "episodes_1_5_share_of_cost (Luna chunk runs)": 0.2881757025305348,
+  "free_list_price": 1.181716284,
+  "chunk_list_price_extrapolated": 2.572557538647615
+ },
+ "gemini_per_sequence": {
+  "free": {
+   "luna_tokens_cached": 0.8124357333333334,
+   "deepseek_tokens_cached": 1.32888285,
+   "luna_tokens_no_cache": 2.3375669583333334,
+   "deepseek_tokens_no_cache": 4.33957725
+  },
+  "chunk": {
+   "luna_tokens_cached": 1.655250766666667,
+   "deepseek_tokens_cached": 2.870114977553882,
+   "luna_tokens_no_cache": 2.162293666666667,
+   "deepseek_tokens_no_cache": 8.165084631833874
+  }
+ },
+ "scenarios": {
+  "a_deepseek_15x2_billed_pinned": 25.660077742803725,
+  "a_deepseek_15x2_list": 56.314107339714226,
+  "a_gemini_15x2_low_mid_high": [
+   37.0152975,
+   65.24143839415412,
+   187.56992822750811
+  ],
+  "b_luna_seq1_5_both_arms": {
+   "mean": 5.9237424999999995,
+   "min": 5.18053,
+   "max": 6.547325000000001
+  },
+  "c_luna_4_new_both_arms": {
+   "mean": 4.738994,
+   "min": 4.144424,
+   "max": 5.23786
+  }
+ },
+ "ceiling": {
+  "deepseek_free": {
+   "episodes": 10,
+   "accepts": "18/20",
+   "episode1_accepts": "0/2",
+   "first_accept_episode": {
+    "alice": 2,
+    "bob": 2
+   },
+   "mutual_by_episode": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "first_mutual": 2
+  },
+  "deepseek_chunk_5ep": {
+   "episodes": 5,
+   "accepts": "8/10",
+   "episode1_accepts": "0/2",
+   "first_accept_episode": {
+    "alice": 2,
+    "bob": 2
+   },
+   "mutual_by_episode": [
+    0,
+    1,
+    1,
+    1,
+    1
+   ],
+   "first_mutual": 2
+  },
+  "qwen3.7_chunk-choice": {
+   "episodes": 10,
+   "accepts": "4/20",
+   "episode1_accepts": "0/2",
+   "first_accept_episode": {
+    "alice": null,
+    "bob": 7
+   },
+   "mutual_by_episode": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "first_mutual": null
+  },
+  "qwen3.7_free-text": {
+   "episodes": 2,
+   "accepts": "2/4",
+   "episode1_accepts": "0/2",
+   "first_accept_episode": {
+    "alice": 2,
+    "bob": 2
+   },
+   "mutual_by_episode": [
+    0,
+    1
+   ],
+   "first_mutual": 2
+  },
+  "luna_reference": {
+   "episode1_accepts": "0/44 (both arms)",
+   "median_first_accept": "6 (free), 3 (chunks)"
+  },
+  "gemini_flash_lite_released_controlled_peer": {
+   "raw-prefix--accept": {
+    "alice_accept": "82/500",
+    "by_episode_index": {
+     "0": "0/50",
+     "1": "3/50",
+     "2": "5/50",
+     "3": "2/50",
+     "4": "11/50",
+     "5": "7/50",
+     "6": "12/50",
+     "7": "15/50",
+     "8": "15/50",
+     "9": "12/50"
+    },
+    "sequences_ever_accepting": "31/50",
+    "median_first_accept_index": 4.0
+   },
+   "raw-prefix--reject": {
+    "alice_accept": "68/500",
+    "by_episode_index": {
+     "0": "0/50",
+     "1": "2/50",
+     "2": "3/50",
+     "3": "8/50",
+     "4": "5/50",
+     "5": "9/50",
+     "6": "9/50",
+     "7": "8/50",
+     "8": "12/50",
+     "9": "12/50"
+    },
+    "sequences_ever_accepting": "27/50",
+    "median_first_accept_index": 5.0
+   },
+   "summary--accept": {
+    "alice_accept": "206/500",
+    "by_episode_index": {
+     "0": "1/50",
+     "1": "7/50",
+     "2": "13/50",
+     "3": "21/50",
+     "4": "24/50",
+     "5": "27/50",
+     "6": "25/50",
+     "7": "29/50",
+     "8": "28/50",
+     "9": "31/50"
+    },
+    "sequences_ever_accepting": "44/50",
+    "median_first_accept_index": 3.0
+   },
+   "summary--reject": {
+    "alice_accept": "175/500",
+    "by_episode_index": {
+     "0": "0/50",
+     "1": "0/50",
+     "2": "10/50",
+     "3": "13/50",
+     "4": "17/50",
+     "5": "20/50",
+     "6": "26/50",
+     "7": "29/50",
+     "8": "27/50",
+     "9": "33/50"
+    },
+    "sequences_ever_accepting": "40/50",
+    "median_first_accept_index": 4.0
+   }
+  }
+ }
+}
