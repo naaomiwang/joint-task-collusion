@@ -12,7 +12,7 @@
 | 1 | Status check: nothing running; follow-up smoke finished ($0.3996), main run $0 | done | (this commit) |
 | 2 | Verbatim arm behind `--comm-mode verbatim`; tests (23 pass); mock dry run `results/luna_extension/dry_run_arms.md` | done | see git log |
 | 3 | Pre-registration `results/luna_extension/PLAN.md`, `run_plan.json`, `cost_estimate.md`; manifests `task/task_sequences_luna15/` | done | see git log |
-| 4 | Analysis script `analysis/final/run_all.py`, tested on existing data | pending | |
+| 4 | Analysis script `analysis/final/run_all.py`; test output `results/luna_extension/test_output/` (stand-ins; reproduces EC 9/110 vs 29/110) | done | see git log |
 | 5 | Run scripts `scripts/launch_extension.sh`, `scripts/status.sh`; resume paragraph | pending | |
 | 6 | **User's explicit OK** to launch | waiting | |
 | 7 | Launch (detached), monitor with `scripts/status.sh`, no peeking at outcomes | not started | |
