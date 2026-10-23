@@ -2,7 +2,7 @@
 
 Per-sequence billed cost of the current-harness runs (sequences 6–11, 6 runs per arm):
 free text $0.377 ($0.320–$0.426), chunks $0.807 ($0.716–$0.884).
-Verbatim has no runs yet; it is priced as free text × 1.25 (up to 3 retries add calls), range ×1.0–×1.5.
+Verbatim has no runs yet; it is priced as free text × 1.25 (rejected excerpts add retry calls), range ×1.0–×1.5.
 
 | Runs | Expected | Range |
 |---|---|---|

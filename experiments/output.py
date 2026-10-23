@@ -279,7 +279,7 @@ def build_run_output(
             },
             "max_rounds": args.max_rounds,
             "task_attempts": TASK_ATTEMPTS,
-            "communication_attempts": 4 if args.comm_mode == "verbatim" else COMMUNICATION_ATTEMPTS,
+            "communication_attempts": COMMUNICATION_ATTEMPTS,
             "verdict_attempts": VERDICT_ATTEMPTS,
             "tool_choice_mode": "required",
             "throttle_spans": args.throttle_spans,

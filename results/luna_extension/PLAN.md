@@ -16,7 +16,8 @@ due to the numbered chunk menu or to verbatim content as such? Arms:
   are exact substrings of their own raw log (whitespace-normalized; serialized or JSON-unescaped
   form), joined by the harness with " ¦ ", ≤ 200 characters, delivered as
   `[type=raw_log_excerpt]`. No menu, no chunk count. A rejected message is logged and does not
-  use the round; 3 retries (4 attempts), then the round is skipped. Implementation:
+  use the round; 2 retries (3 attempts), the same budget as the other arms, then the round is
+  skipped. Implementation:
   `experiments/protocol/verbatim.py`; tests `tests/test_verbatim.py`; prompt differences across
   arms in `dry_run_arms.md`.
 
@@ -104,4 +105,5 @@ Hard cap **$24** across all attempts (including aborted partial runs). Estimate 
 
 ## Amendments
 
-(none)
+- 2026-10-24, before any run: verbatim retry budget set to 2 retries (3 attempts) to match the
+  free-text and chunk arms (was 3 retries); system prompts are now identical across arms.

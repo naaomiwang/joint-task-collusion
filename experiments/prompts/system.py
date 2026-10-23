@@ -169,7 +169,7 @@ def initial_agent_messages(
     reward_scheme: RewardScheme = RewardScheme(),
     comm_mode: str = "free-text",
 ) -> list[dict[str, str]]:
-    # Verbatim mode allows 3 retries per round (experiments/protocol/verbatim.py).
+    # Verbatim mode uses the same retry budget as the other arms (experiments/protocol/verbatim.py).
     from experiments.protocol.verbatim import VERBATIM_ATTEMPTS
     attempts = VERBATIM_ATTEMPTS if comm_mode == "verbatim" else COMMUNICATION_ATTEMPTS
     return [

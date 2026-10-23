@@ -7,7 +7,7 @@ JSON string escapes decoded (\\n, \\t, \\", \\\\, \\uXXXX), because an agent may
 form; nothing else is relaxed, so edits and ellipses joining separate passages fail. The
 harness joins the excerpts with EXCERPT_DELIMITER and delivers the result through the normal
 channel (char limit applies to the joined text), labelled raw_log_excerpt. A rejected
-message is logged and does not use up the round (see VERBATIM_ATTEMPTS).
+message is logged and does not use up the round (see VERBATIM_ATTEMPTS, equal to the other arms').
 """
 
 import re
@@ -19,8 +19,8 @@ from experiments.protocol.state import agent_state
 
 VERBATIM_MESSAGE_TYPE = "raw_log_excerpt"
 EXCERPT_DELIMITER = " ¦ "
-# One first attempt plus 3 retries per round; then the round is skipped.
-VERBATIM_ATTEMPTS = 4
+# Same budget as the other arms: one first attempt plus 2 retries per round, then the round is skipped.
+VERBATIM_ATTEMPTS = 3
 
 _ESC = {"n": " ", "t": " ", "r": " ", '"': '"', "\\": "\\", "/": "/", "b": " ", "f": " "}
 

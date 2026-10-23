@@ -75,28 +75,27 @@ def _run(monkeypatch, fails_before_success):
     return state, runtimes, calls
 
 
-def test_three_retries_then_delivery(monkeypatch):
-    state, runtimes, calls = _run(monkeypatch, fails_before_success=3)
-    assert calls["alice"] == VERBATIM_ATTEMPTS == 4
+def test_two_retries_then_delivery(monkeypatch):
+    state, runtimes, calls = _run(monkeypatch, fails_before_success=2)
+    assert calls["alice"] == VERBATIM_ATTEMPTS == 3
     assert sum(1 for e in state["events"] if e["tool"] == "send_message" and e["success"]) == 2
     text = "\n".join(m["content"] for m in runtimes["bob"].messages if "content" in m)
     assert "[from=alice][type=raw_log_excerpt]" in text
     assert "split into" not in text and "chunk 1:" not in text
 
 
-def test_round_skipped_after_four_rejections(monkeypatch):
+def test_round_skipped_after_three_rejections(monkeypatch):
     state, runtimes, calls = _run(monkeypatch, fails_before_success=99)
-    assert calls["alice"] == 4
+    assert calls["alice"] == 3
     assert not [e for e in state["events"] if e["tool"] == "send_message" and e["success"]]
-    assert sum(1 for e in state["events"] if e.get("verbatim_rejection")) == 8
+    assert sum(1 for e in state["events"] if e.get("verbatim_rejection")) == 6
 
 
-def test_free_text_system_prompt_unchanged_and_verbatim_differs_only_in_retries():
+def test_system_prompt_identical_across_free_text_and_verbatim():
     paths = glob.glob(str(REPO / "results/l/f/**/run.json"), recursive=True)
     free = initial_agent_messages(agent_id="alice", max_rounds=5, reward_objective=True)[0]["content"]
     verb = initial_agent_messages(agent_id="alice", max_rounds=5, reward_objective=True, comm_mode="verbatim")[0]["content"]
     if paths:
         stored = json.load(open(paths[0], encoding="utf-8"))["run_config"]["prompt_texts"]["system_prompts"]["alice"]
         assert free == stored
-    diff = [(a, b) for a, b in zip(free.splitlines(), verb.splitlines()) if a != b]
-    assert len(diff) == 1 and "retried at most 2 times" in diff[0][0] and "retried at most 3 times" in diff[0][1]
+    assert verb == free and "retried at most 2 times" in free

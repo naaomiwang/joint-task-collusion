@@ -58,8 +58,6 @@ Stored judge-episode: free text, sequence 8, episode 7 (Alice judges Bob). Only 
 ## free-text → verbatim
 
 ```diff
--- In your turn, send_message can be retried at most 2 times. If no message is delivered, Bob is told you failed to deliver.
-+- In your turn, send_message can be retried at most 3 times. If no message is delivered, Bob is told you failed to deliver.
 -  "description": "Send a message to Bob.",
 +  "description": "Send one message to Bob made of excerpts copied exactly from your raw log. The excerpts are delivered verbatim.",
 -    "content": {
@@ -106,8 +104,6 @@ Stored judge-episode: free text, sequence 8, episode 7 (Alice judges Bob). Only 
 ## chunk-choice → verbatim
 
 ```diff
--- In your turn, send_message can be retried at most 2 times. If no message is delivered, Bob is told you failed to deliver.
-+- In your turn, send_message can be retried at most 3 times. If no message is delivered, Bob is told you failed to deliver.
 -  "description": "Send one chunk of your raw log to Bob, chosen by its ID. The chunk's text is delivered verbatim.",
 +  "description": "Send one message to Bob made of excerpts copied exactly from your raw log. The excerpts are delivered verbatim.",
 -    "chunk_id": {
