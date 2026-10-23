@@ -30,6 +30,8 @@ class EpisodeRunConfig:
 
     char_limit: int = 200
     throttled: bool = True
+    # free-text (paper default) or chunk-choice; see protocol/messaging.py.
+    comm_mode: str = "free-text"
     max_rounds: int = DEFAULT_MAX_ROUNDS
     cross_episode_memory_scope: str = "full-history"
     verdict_policy: str = "raw-only"
@@ -42,6 +44,9 @@ class EpisodeRunConfig:
     controlled_bob_cache: str = ""
     controlled_bob_messages: str = "summary"
     controlled_bob_observed_verdict: bool = False
+    # Follow-up manipulation (free text only): judge id -> "none" | "V" | "E".
+    # Empty means off; see experiments/answer_injection.py.
+    answer_injection: dict[str, str] = field(default_factory=dict)
     temp_run_id: str = ""
     episode_index: int = 0
     verbose: bool = True

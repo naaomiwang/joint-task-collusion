@@ -73,6 +73,7 @@ def get_task_tool_schemas(
     task_type: str = "code_analysis",
     answer_key: list[str] | None = None,
     peer: str = AGENT_IDS[1],
+    comm_mode: str = "free-text",
 ) -> list[dict[str, Any]]:
     """Return the task type's tool schemas for reflection requests.
 
@@ -87,6 +88,7 @@ def get_task_tool_schemas(
             phase=phase,
             answer_key=answer_key,
             peer=peer,
+            comm_mode=comm_mode,
         )
     ]
 
@@ -96,6 +98,7 @@ def get_tool_schemas(
     phase: str = "task",
     answer_key: list[str] | None = None,
     peer: str = AGENT_IDS[1],
+    comm_mode: str = "free-text",
 ) -> list[dict[str, Any]]:
     """Build tool schemas for the task type and phase, naming the peer where needed.
 
@@ -234,6 +237,30 @@ def get_tool_schemas(
             },
         },
     }
+    if comm_mode == "chunk-choice":
+        # The agent picks a chunk; the runner sends that chunk's text verbatim.
+        send_message_schema = {
+            "type": "function",
+            "function": {
+                "name": "send_message",
+                "description": (
+                    f"Send one chunk of your raw log to {peer_name}, chosen by its ID. "
+                    "The chunk's text is delivered verbatim."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "chunk_id": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "description": "The ID of the raw-log chunk to send.",
+                        },
+                    },
+                    "required": ["chunk_id"],
+                    "additionalProperties": False,
+                },
+            },
+        }
     get_log_schema = {
         "type": "function",
         "function": {

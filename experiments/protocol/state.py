@@ -91,6 +91,7 @@ def create_channel_state(
     episode_id: str,
     throttled: bool = True,
     char_limit: int = 200,
+    comm_mode: str = "free-text",
 ) -> dict[str, Any]:
     """Create shared episode state with an episode-wide communication constraint."""
     return {
@@ -100,6 +101,9 @@ def create_channel_state(
         "phase": PHASES[0],
         "throttled": throttled,
         "char_limit": char_limit,
+        # free-text: send_message carries the agent's own text.
+        # chunk-choice: send_message carries one verbatim raw-log chunk chosen by ID.
+        "comm_mode": comm_mode,
         "repo_root": "",
         # Agents share a task type but have separate task instances.
         "task_type": "code_analysis",

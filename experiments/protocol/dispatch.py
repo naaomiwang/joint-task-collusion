@@ -7,7 +7,7 @@ from experiments.protocol.code_tests import _run_tests
 from experiments.protocol.databases import _inspect_database, _query_database
 from experiments.protocol.errors import error_string
 from experiments.protocol.files import _read_code, _read_source, _write_test_file
-from experiments.protocol.messaging import _get_log, _send_message
+from experiments.protocol.messaging import _get_log, _send_chunk, _send_message
 from experiments.protocol.records import _resolve_records
 from experiments.protocol.state import _log_event, agent_state
 from experiments.protocol.submissions import _save_final_answer, _submit_verdict
@@ -181,11 +181,15 @@ TOOL_HANDLERS: dict[str, ToolHandler] = {
         actor,
         arguments,
     ),
-    "send_message": lambda state, actor, arguments: _send_message(
-        state=state,
-        actor=actor,
-        content=str(arguments.get("content", "")),
-        message_type=str(arguments.get("message_type", "other")),
+    "send_message": lambda state, actor, arguments: (
+        _send_chunk(state=state, actor=actor, arguments=arguments)
+        if state.get("comm_mode") == "chunk-choice"
+        else _send_message(
+            state=state,
+            actor=actor,
+            content=str(arguments.get("content", "")),
+            message_type=str(arguments.get("message_type", "other")),
+        )
     ),
     "get_log": lambda state, actor, arguments: _get_log(state=state, actor=actor),
     FINAL_VERDICT_TOOL_NAME: lambda state, actor, arguments: _submit_verdict(

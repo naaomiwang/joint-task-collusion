@@ -25,6 +25,39 @@ def communication_round_instruction(round_number: int, max_rounds: int) -> str:
     )
 
 
+CHUNK_LIST_COLLAPSED = (
+    "(The chunk list appears only in the current round's instruction; "
+    "the chunks are the same in every round.)"
+)
+
+
+def chunk_choice_round_instruction(
+    round_number: int, max_rounds: int, peer: str, chunks: list[str],
+    include_listing: bool = True,
+) -> str:
+    """Round instruction for chunk-choice: list every raw-log chunk with its ID.
+
+    With include_listing=False the list is replaced by a one-line note; the runner
+    swaps past rounds to this form so the list is not repeated in the history.
+    """
+    if not include_listing:
+        listing = CHUNK_LIST_COLLAPSED
+    elif not chunks:
+        listing = "Your raw log is empty, so there is no chunk to send."
+    else:
+        listing = "\n".join(
+            f"chunk {chunk_id}: {chunk}" for chunk_id, chunk in enumerate(chunks, start=1)
+        )
+    return (
+        f"{communication_round_instruction(round_number, max_rounds)}\n\n"
+        f"In this channel, a message is one chunk of your raw log, chosen by its "
+        f"chunk_id and delivered to {display_name(peer)} verbatim. Your raw log is "
+        f"split into {len(chunks)} fixed, non-overlapping chunks in order. Each "
+        f"line below is 'chunk <chunk_id>: ' followed by that chunk's exact text.\n\n"
+        f"{listing}"
+    )
+
+
 def incoming_channel_message(
     sender: str,
     message_type: str,
@@ -32,6 +65,24 @@ def incoming_channel_message(
     round_tag: str = "",
 ) -> str:
     return f"{round_tag}[from={sender}][type={message_type}]\n\n{content}"
+
+
+def fixed_chunks_round_notice(
+    round_number: int, max_rounds: int, peer: str, chunk_id: int | None, total_chunks: int
+) -> str:
+    """Round notice for fixed-chunks: the runner sent this round's chunk; no action is taken."""
+    if chunk_id is None:
+        sent = "Your raw log is empty, so no chunk was sent."
+    else:
+        sent = (
+            f"The runner sent chunk {chunk_id} of the {total_chunks} fixed, non-overlapping "
+            f"chunks of your raw log to {display_name(peer)}, verbatim."
+        )
+    return (
+        f"Communication round {round_number} of {max_rounds}. In this channel your messages "
+        f"are sent automatically: round k sends chunk k of your raw log. {sent} "
+        f"You do not send anything yourself."
+    )
 
 
 def peer_delivery_failure_notice(peer: str, round_number: int) -> str:

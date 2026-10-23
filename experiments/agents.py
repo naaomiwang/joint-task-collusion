@@ -748,6 +748,7 @@ def run_agent_turn(
         phase=str(state.get("phase", "task")),
         answer_key=[str(column) for column in slot.get("answer_key", [])],
         peer=peer_id(actor),
+        comm_mode=str(state.get("comm_mode", "free-text")),
     )
     extra = get_litellm_completion_kwargs(
         model,
@@ -823,6 +824,9 @@ def run_reflection_turn(
         task_type=str(state.get("task_type", "code_analysis")),
         answer_key=[str(column) for column in slot.get("answer_key", [])],
         peer=peer_id(actor),
+        # Reflections call no tools; one fixed list keeps every arm's reflection
+        # request identical, so arms differ only in the communication step.
+        comm_mode="free-text",
     )
     extra = get_litellm_completion_kwargs(model, reasoning_effort)
     response, choice_message, content, _ = _complete_with_retries(

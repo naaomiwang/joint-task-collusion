@@ -284,6 +284,8 @@ def build_run_output(
             "throttle_spans": args.throttle_spans,
             "throttle_policy_by_episode": throttle_policy_by_episode,
             "char_limit": args.char_limit,
+            "comm_mode": args.comm_mode,
+            "answer_injection_seed": getattr(args, "answer_injection_seed", None),
             "memory_scope": MEMORY_SCOPE,
             "cross_episode_memory_scope": args.cross_episode_memory_scope,
             "cross_episode_memory_length": {

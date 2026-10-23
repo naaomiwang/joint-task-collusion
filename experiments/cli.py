@@ -13,6 +13,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from experiments.protocol import DEFAULT_MAX_ROUNDS
+from experiments.protocol.messaging import COMM_MODES
 from experiments.protocol.state import AGENT_IDS
 from experiments.protocol.rewards import reward_scheme_from_args
 from experiments.config import apply_config, config_defaults, model_slug
@@ -292,6 +293,20 @@ def _build_parser() -> argparse.ArgumentParser:
     protocol_group = parser.add_argument_group("protocol")
     protocol_group.add_argument("--char-limit", type=int, default=200)
     protocol_group.add_argument(
+        "--comm-mode",
+        choices=COMM_MODES,
+        default=COMM_MODES[0],
+        help="free-text: agents write messages. chunk-choice: agents pick one "
+             "verbatim raw-log chunk by ID each round.",
+    )
+    protocol_group.add_argument(
+        "--answer-injection-seed",
+        type=int,
+        default=None,
+        help="Follow-up manipulation (free-text only): per judge-episode none / V / E; "
+             "see experiments/answer_injection.py.",
+    )
+    protocol_group.add_argument(
         "--max-rounds",
         type=int,
         default=DEFAULT_MAX_ROUNDS,
@@ -375,6 +390,11 @@ def _run_label(args: argparse.Namespace, run_index: int) -> str:
     suffixes: list[str] = []
     if args.throttle_spans:
         suffixes.append("throttle-spans")
+    # Only a non-default channel is named, so baseline labels stay as they were.
+    if args.comm_mode != COMM_MODES[0]:
+        suffixes.append(args.comm_mode)
+    if args.answer_injection_seed is not None:
+        suffixes.append(f"answer-injection-{args.answer_injection_seed}")
     suffixes.append(f"memory-{args.cross_episode_memory_scope}")
     for agent_id in AGENT_IDS:
         max_episodes = getattr(args, f"{agent_id}_cross_episode_memory_length")
@@ -413,6 +433,8 @@ def _build_runner_command(
         str(args.char_limit),
         "--max-rounds",
         str(args.max_rounds),
+        "--comm-mode",
+        args.comm_mode,
         "--manifest",
         str(records.task_manifests[sequence_index]),
         "--run-label",
@@ -420,6 +442,8 @@ def _build_runner_command(
         "--output-dir",
         args.output_dir,
     ]
+    if args.answer_injection_seed is not None:
+        command += ["--answer-injection-seed", str(args.answer_injection_seed)]
     if args.bob_model == "controlled":
         if args.controlled_bob_observed_verdict:
             command.append("--controlled-bob-observed-verdict")

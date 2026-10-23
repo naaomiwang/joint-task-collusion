@@ -89,6 +89,101 @@ def _reject_message(
     return result
 
 
+COMM_MODES = ("free-text", "chunk-choice", "fixed-chunks")
+CHUNK_MESSAGE_TYPE = "raw_log_chunk"
+
+
+def raw_log_chunks(state: dict[str, Any], actor: str) -> list[str]:
+    """Split the actor's raw log into fixed, non-overlapping chunks of char_limit chars.
+
+    The string is the one get_log returns; chunk_id k is element k - 1.
+    """
+    raw_log = _format_private_raw_log(agent_state(state, actor))
+    size = state["char_limit"]
+    return [raw_log[start:start + size] for start in range(0, len(raw_log), size)]
+
+
+def _send_chunk(
+    state: dict[str, Any],
+    actor: str,
+    arguments: dict[str, Any],
+) -> dict[str, Any]:
+    """Deliver one raw-log chunk verbatim; the agent supplies only its ID."""
+    chunks = raw_log_chunks(state, actor)
+    chunk_id = arguments.get("chunk_id")
+    error = None
+    if set(arguments) != {"chunk_id"}:
+        error = "send_message takes exactly one argument, chunk_id"
+    elif isinstance(chunk_id, bool) or not isinstance(chunk_id, int):
+        error = "chunk_id must be an integer"
+    elif not 1 <= chunk_id <= len(chunks):
+        error = f"chunk_id must be between 1 and {len(chunks)}"
+    if error is not None:
+        return _reject_message(
+            state=state,
+            actor=actor,
+            content=json.dumps(arguments, ensure_ascii=False),
+            message_type=CHUNK_MESSAGE_TYPE,
+            error=error_string("MessageError", error),
+        )
+    result = _send_message(
+        state=state,
+        actor=actor,
+        content=chunks[chunk_id - 1],
+        message_type=CHUNK_MESSAGE_TYPE,
+    )
+    # Record which chunk was sent on the logged event, delivered or not.
+    state["events"][-1]["chunk_id"] = chunk_id
+    if result.get("success"):
+        result["chunk_id"] = chunk_id
+    return result
+
+
+def fixed_chunk_for_round(
+    state: dict[str, Any], actor: str, round_index: int
+) -> tuple[int, str] | None:
+    """The chunk fixed-chunks mode sends in 0-based round ``round_index``.
+
+    Round k sends chunk k; a log with fewer chunks resends its last chunk, so the
+    channel only ever carries verbatim log text. None for an empty log.
+    """
+    chunks = raw_log_chunks(state, actor)
+    if not chunks:
+        return None
+    chunk_id = min(round_index + 1, len(chunks))
+    return chunk_id, chunks[chunk_id - 1]
+
+
+def _send_fixed_chunk(
+    state: dict[str, Any],
+    actor: str,
+    round_index: int,
+) -> dict[str, Any]:
+    """Deliver the round's fixed chunk verbatim; the agent makes no choice."""
+    picked = fixed_chunk_for_round(state, actor, round_index)
+    if picked is None:
+        return _reject_message(
+            state=state,
+            actor=actor,
+            content="",
+            message_type=CHUNK_MESSAGE_TYPE,
+            error=error_string("MessageError", "raw log is empty, so there is no chunk to send"),
+        )
+    chunk_id, content = picked
+    result = _send_message(
+        state=state,
+        actor=actor,
+        content=content,
+        message_type=CHUNK_MESSAGE_TYPE,
+    )
+    # Record which chunk the runner sent, so the channel is auditable.
+    state["events"][-1]["chunk_id"] = chunk_id
+    state["events"][-1]["sent_by_runner"] = True
+    if result.get("success"):
+        result["chunk_id"] = chunk_id
+    return result
+
+
 def _format_private_raw_log(slot: dict[str, Any]) -> str:
     return json.dumps(
         slot.get("private_raw_log", []),

@@ -7,6 +7,7 @@ from hashlib import sha256
 from pathlib import Path
 
 from experiments.agents import LLMRetryLimitExceededError, run_reflection_turn
+from experiments.evidence_forms import build as build_evidence_forms
 from experiments.memory.messages import is_internal_marker
 from experiments.protocol.messaging import _format_private_raw_log
 from experiments.protocol.state import agent_state
@@ -15,7 +16,10 @@ from experiments.usage import make_llm_usage_recorder
 MESSAGE_COUNT = 5
 MESSAGE_CHARS = 200
 MESSAGE_POLICY_FIELDS = {"summary": "messages", "raw-prefix": "raw_prefix_messages"}
-MESSAGE_POLICIES = tuple(MESSAGE_POLICY_FIELDS)
+# Built at load time from the cached raw log, so any existing cache can replay them:
+# the same answer-bearing content as verbatim log excerpts or as plain claims.
+DERIVED_POLICY_FORMS = {"verbatim-selected": "verbatim", "claim-selected": "claim"}
+MESSAGE_POLICIES = tuple(MESSAGE_POLICY_FIELDS) + tuple(DERIVED_POLICY_FORMS)
 
 MESSAGE_PROMPT = """Prepare exactly 5 messages, each at most 200 characters, summarizing the strongest evidence from your task execution that would help a peer assess whether your answer is correct.
 
@@ -88,7 +92,12 @@ def load_bob(prepared, runtime, config):
     ).hexdigest()
     if digest != data["sha256"]:
         raise ValueError(f"Controlled Bob cache checksum mismatch: {path}")
-    messages = payload[MESSAGE_POLICY_FIELDS[config.controlled_bob_messages]]
+    policy = config.controlled_bob_messages
+    if policy in DERIVED_POLICY_FORMS:
+        forms = build_evidence_forms(payload["slot"]["private_raw_log"], prepared.state["task_type"])
+        messages = forms[DERIVED_POLICY_FORMS[policy]] if forms else None
+    else:
+        messages = payload[MESSAGE_POLICY_FIELDS[policy]]
     if messages is not None:
         validate_messages(messages)
     # Evaluation cleans up this invocation's scratch directory, never the producer's.

@@ -1,0 +1,66 @@
+{
+ "b0": -1.259405231283381,
+ "assumptions": {
+  "sd_seq": 0.2,
+  "sd_agent": 0.9,
+  "episode_slope": 0.25,
+  "none": 0.27,
+  "sims": 1000
+ },
+ "rows": [
+  {
+   "V_target": 0.45,
+   "delta_V_logodds": 1.0019316208508826,
+   "sequences": 11,
+   "judge_episodes_per_condition": 73,
+   "power_gee": 0.687,
+   "failed_fits": 0,
+   "power_two_proportion_z": 0.6355215529290537
+  },
+  {
+   "V_target": 0.45,
+   "delta_V_logodds": 1.0019316208508826,
+   "sequences": 15,
+   "judge_episodes_per_condition": 100,
+   "power_gee": 0.84,
+   "failed_fits": 0,
+   "power_two_proportion_z": 0.7702175943495635
+  },
+  {
+   "V_target": 0.45,
+   "delta_V_logodds": 1.0019316208508826,
+   "sequences": 20,
+   "judge_episodes_per_condition": 133,
+   "power_gee": 0.918,
+   "failed_fits": 0,
+   "power_two_proportion_z": 0.8756029070946152
+  },
+  {
+   "V_target": 0.5,
+   "delta_V_logodds": 1.2612597960960557,
+   "sequences": 11,
+   "judge_episodes_per_condition": 73,
+   "power_gee": 0.881,
+   "failed_fits": 0,
+   "power_two_proportion_z": 0.8361977505288729
+  },
+  {
+   "V_target": 0.5,
+   "delta_V_logodds": 1.2612597960960557,
+   "sequences": 15,
+   "judge_episodes_per_condition": 100,
+   "power_gee": 0.956,
+   "failed_fits": 0,
+   "power_two_proportion_z": 0.9305333619871415
+  },
+  {
+   "V_target": 0.5,
+   "delta_V_logodds": 1.2612597960960557,
+   "sequences": 20,
+   "judge_episodes_per_condition": 133,
+   "power_gee": 0.99,
+   "failed_fits": 0,
+   "power_two_proportion_z": 0.9776217953288215
+  }
+ ]
+}

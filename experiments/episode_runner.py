@@ -11,8 +11,9 @@ from typing import Any, Callable
 
 from litellm.exceptions import ContextWindowExceededError
 
+from experiments.answer_injection import inject_answer_chunks
 from experiments.controlled import load_bob
-from experiments.protocol.messaging import _send_message
+from experiments.protocol.messaging import _send_fixed_chunk, _send_message, raw_log_chunks
 from experiments.protocol.submissions import _submit_verdict
 from experiments.agents import run_agent_turn, run_reflection_turn
 from experiments.evaluation import evaluate_saved_artifact
@@ -41,6 +42,8 @@ from experiments.prompts.messages import (
     AUTO_FORCED_REJECT_REASONING,
     agent_outcome_feedback_message,
     agent_reflection_prompt,
+    chunk_choice_round_instruction,
+    fixed_chunks_round_notice,
     communication_round_instruction,
     communication_round_tag,
     incoming_channel_message,
@@ -482,6 +485,7 @@ def _prepare_pair(
         episode_id=f"{first['task_id']}+{second['task_id']}",
         throttled=config.throttled,
         char_limit=config.char_limit,
+        comm_mode=config.comm_mode,
     )
     state.update(
         {
@@ -648,8 +652,16 @@ def _run_communication_phase(
         if not (actor == "bob" and config.controlled_bob_verdict)
     }
     _open_communication_phase(prepared=prepared, runtimes=active_runtimes)
+    if config.answer_injection:
+        # Queued before round 1; read at each agent's round-1 turn. Not a send_message.
+        state["round"] = 0
+        inject_answer_chunks(state, config.answer_injection)
     # Force the communication phase's single tool by name.
     tool_choice = forced_tool_choice(prepared.task_type, "communication")
+    # Chunk-choice: each agent's earlier round instructions, with their collapsed text.
+    # Only the current round keeps the full chunk list; earlier copies would only
+    # repeat it in every later request and in cross-episode memory.
+    shown_chunk_lists: dict[str, list[tuple[dict[str, Any], str]]] = {a: [] for a in AGENT_IDS}
     for round_index in range(config.max_rounds):
         state["round"] = round_index
         log_progress(
@@ -680,15 +692,48 @@ def _run_communication_phase(
                 incoming=pop_incoming_messages(state, agent_id),
                 max_rounds=config.max_rounds,
             )
+            if config.comm_mode == "fixed-chunks":
+                # The runner sends chunk k in round k; the agent makes no model call.
+                reset_message_delivery(state, agent_id)
+                sent = _send_fixed_chunk(state, agent_id, round_index)
+                runtime.messages.append(
+                    {
+                        "role": "user",
+                        "content": fixed_chunks_round_notice(
+                            round_index + 1,
+                            config.max_rounds,
+                            peer_id(agent_id),
+                            sent.get("chunk_id"),
+                            len(raw_log_chunks(state, agent_id)),
+                        ),
+                    }
+                )
+                if not sent.get("success"):
+                    deliver_runner_notice(
+                        state,
+                        peer_id(agent_id),
+                        peer_delivery_failure_notice(
+                            peer=agent_id, round_number=round_index + 1
+                        ),
+                    )
+                continue
             # Add one round instruction per turn, after incoming messages; retries reuse it.
-            runtime.messages.append(
-                {
-                    "role": "user",
-                    "content": communication_round_instruction(
-                        round_index + 1, config.max_rounds
-                    ),
-                }
-            )
+            collapsed = None
+            if config.comm_mode == "chunk-choice":
+                for shown, short in shown_chunk_lists[agent_id]:
+                    shown["content"] = short
+                args = (round_index + 1, config.max_rounds, peer_id(agent_id),
+                        raw_log_chunks(state, agent_id))
+                instruction = chunk_choice_round_instruction(*args)
+                collapsed = chunk_choice_round_instruction(*args, include_listing=False)
+            else:
+                instruction = communication_round_instruction(
+                    round_index + 1, config.max_rounds
+                )
+            message = {"role": "user", "content": instruction}
+            runtime.messages.append(message)
+            if collapsed is not None:
+                shown_chunk_lists[agent_id].append((message, collapsed))
             delivered = _run_agent_attempts(
                 runtime=runtime,
                 state=state,
@@ -710,6 +755,10 @@ def _run_communication_phase(
                         round_number=round_index + 1,
                     ),
                 )
+    # The last round's list is not needed in the verdict phase or in memory.
+    for shown_list in shown_chunk_lists.values():
+        for shown, short in shown_list:
+            shown["content"] = short
     _close_communication_phase(state=state, runtimes=runtimes, config=config)
 
 
@@ -1052,6 +1101,8 @@ def run_one_episode(
         usage_records=llm_usage,
         agent_messages=agent_messages,
     )
+    if config.answer_injection:
+        result["answer_injection"] = state.get("answer_injection", {})
     if config.controlled_bob_verdict:
         result["controlled_bob"] = {
             **state["controlled_bob"],

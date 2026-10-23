@@ -12,6 +12,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from experiments.answer_injection import assign_condition
 from experiments.controlled import MESSAGE_POLICIES, cached_model_settings
 from experiments.episode_runner import log_progress, run_one_episode
 from experiments.episode_schedules import (
@@ -45,6 +46,7 @@ from experiments.protocol.rewards import (
     RewardScheme,
     reward_scheme_from_args,
 )
+from experiments.protocol.messaging import COMM_MODES
 from experiments.protocol.state import AGENT_IDS
 from experiments.tasks import (
     DEFAULT_TASK_SEQUENCES,
@@ -255,6 +257,20 @@ def build_run_parser() -> argparse.ArgumentParser:
     )
     protocol_group.add_argument("--char-limit", type=int, default=200)
     protocol_group.add_argument(
+        "--comm-mode",
+        choices=COMM_MODES,
+        default=COMM_MODES[0],
+        help="free-text: agents write messages. chunk-choice: agents pick one "
+             "verbatim raw-log chunk of --char-limit chars by ID each round.",
+    )
+    protocol_group.add_argument(
+        "--answer-injection-seed",
+        type=int,
+        default=None,
+        help="Follow-up manipulation (free-text only): assign each judge-episode to "
+             "none / V / E with this seed; see experiments/answer_injection.py.",
+    )
+    protocol_group.add_argument(
         "--throttle-spans",
         default="",
         help="Per-episode spans, e.g. no-throttle:2,throttled:*.",
@@ -342,6 +358,10 @@ def validate_run_args(args: argparse.Namespace) -> None:
     elif not args.manifest:
         args.manifest = f"{DEFAULT_TASK_SEQUENCES}/rep001_sampled_manifest.json"
     _validate_rounds(args)
+    if getattr(args, "answer_injection_seed", None) is not None and (
+        args.comm_mode != "free-text" or getattr(args, "bob_model", "") == "controlled"
+    ):
+        raise ValueError("--answer-injection-seed requires --comm-mode free-text and two model agents.")
     _resolve_model_settings(args)
     for agent_id in AGENT_IDS:
         if getattr(args, f"{agent_id}_cross_episode_memory_length") < -1:
@@ -489,6 +509,7 @@ def _resume_state(
         "cross_episode_memory_scope": args.cross_episode_memory_scope,
         "max_rounds": args.max_rounds,
         "char_limit": args.char_limit,
+        "comm_mode": args.comm_mode,
         "verdict_evaluation": reward_scheme.verdict_review_direction(args.verdict_review),
         "reflection": args.reflection,
         "reward": args.reward,
@@ -685,6 +706,7 @@ def _run_selected_episodes(
             config=EpisodeRunConfig(
                 throttled=throttled,
                 char_limit=args.char_limit,
+                comm_mode=args.comm_mode,
                 max_rounds=args.max_rounds,
                 cross_episode_memory_scope=args.cross_episode_memory_scope,
                 verdict_policy=verdict_policy,
@@ -703,6 +725,16 @@ def _run_selected_episodes(
                 verbose=verbose,
                 usage_journal_path=usage_journal_path,
                 usage_invocation_id=usage_invocation_id,
+                answer_injection=(
+                    {
+                        judge: assign_condition(
+                            args.answer_injection_seed, selected.manifest_path.stem, episode_index, judge
+                        )
+                        for judge in AGENT_IDS
+                    }
+                    if args.answer_injection_seed is not None
+                    else {}
+                ),
             ),
             agent_messages=agent_messages,
         )

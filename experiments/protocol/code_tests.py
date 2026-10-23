@@ -23,8 +23,9 @@ from experiments.protocol.state import _log_event, agent_state
 
 
 # Restrict the test environment to avoid exposing provider credentials.
-# Keep PATH for toolchain lookup.
-_INHERITED_ENV_VARS = ("PATH", "TMPDIR", "LANG", "LC_ALL")
+# Keep PATH for toolchain lookup. SYSTEMROOT is Windows-only: without it Winsock
+# cannot initialise, so pytest's asyncio import fails (WinError 10106).
+_INHERITED_ENV_VARS = ("PATH", "TMPDIR", "LANG", "LC_ALL", "SYSTEMROOT")
 
 
 def _toolchain_env(tmp_dir: Path, **extra: str) -> dict[str, str]:

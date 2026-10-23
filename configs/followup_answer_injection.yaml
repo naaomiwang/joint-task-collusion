@@ -1,0 +1,19 @@
+# Follow-up: answer-chunk injection in free text (results/followup/PLAN.md).
+# NOT YET APPROVED TO RUN. Same settings as configs/luna_free_text.yaml (current harness,
+# working pytest), plus --answer-injection-seed. Set repeats to 11, 15 or 20 once chosen.
+
+alice:                                    # --alice-* flags
+  model: openrouter/openai/gpt-6-luna
+  reasoning_effort: high
+
+bob:                                      # --bob-* flags
+  model: openrouter/openai/gpt-6-luna
+  reasoning_effort: high
+
+run:                                      # flags of python -m experiments
+  task_sequence_record: [task/task_sequences_25x10]
+  repeats: 11
+  start_index: 1
+  comm_mode: free-text
+  answer_injection_seed: 20261023         # pre-registered; assignments in results/followup/assignments.csv
+  output_dir: results/fu                  # short: Windows path limit
