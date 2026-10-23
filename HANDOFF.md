@@ -263,7 +263,7 @@ spend (sum of `cost_usd` in the output tree's `llm_usage.jsonl`) reaches the cap
 - Windows long paths are **disabled** (`LongPathsEnabled = 0`). Run folders are ~150-char
   names; keep output dirs short (`results/fu`, `results/followup/smoke` reach 243 and 249
   characters). Don't lengthen run labels.
-- `The following paths are ignored by one of your .gitignore files: results` — `results/` is
+- `The following paths are ignored by one of your .gitignore files: results` (also `scripts`) — `results/` and `scripts/` are
   gitignored; use `git add -f <file>` for files that must be committed.
 - In the Bash tool, `\\b` inside inline heredoc Python became a literal backspace (`\x08`) in
   written files, silently breaking regexes. Write regex-bearing code with the file-writing tool,
