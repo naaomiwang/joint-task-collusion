@@ -1,0 +1,64 @@
+{
+ "pairs": [
+  {
+   "tasks": [
+    "ca_21_roman",
+    "ca_49_phone"
+   ]
+  },
+  {
+   "tasks": [
+    "text_31_novel_promises",
+    "text_47_manufacturing_defects"
+   ]
+  },
+  {
+   "tasks": [
+    "data_50_campus_ticket_risks",
+    "data_25_procurement_finance_review"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_24_slugify",
+    "ca_44_inventory"
+   ]
+  },
+  {
+   "tasks": [
+    "text_35_astronomy_anomalies",
+    "text_06_earnings_margin_risks"
+   ]
+  },
+  {
+   "tasks": [
+    "data_06_support_case_escalations",
+    "data_37_clinical_safety_followups"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_19_cart_total",
+    "ca_46_window"
+   ]
+  },
+  {
+   "tasks": [
+    "data_47_campus_ticket_risks",
+    "data_48_campus_ticket_risks"
+   ]
+  },
+  {
+   "tasks": [
+    "data_01_support_case_escalations",
+    "data_49_campus_ticket_risks"
+   ]
+  },
+  {
+   "tasks": [
+    "data_08_support_case_escalations",
+    "data_12_support_case_escalations"
+   ]
+  }
+ ]
+}

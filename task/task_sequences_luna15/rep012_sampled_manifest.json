@@ -1,0 +1,64 @@
+{
+ "pairs": [
+  {
+   "tasks": [
+    "text_30_grant_eligibility",
+    "text_03_travel_group_bookings"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_39_topn",
+    "ca_19_cart_total"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_07_compact",
+    "ca_23_temperature"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_35_transactions",
+    "ca_48_pagination"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_01_time",
+    "ca_21_roman"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_04_slugify",
+    "ca_38_csv"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_32_grade",
+    "ca_28_ranges"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_36_date",
+    "ca_43_acronym"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_14_initials",
+    "ca_10_dedupe"
+   ]
+  },
+  {
+   "tasks": [
+    "data_21_procurement_finance_review",
+    "data_09_support_case_escalations"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,149 @@
+{
+ "seed": "luna15-arm-order",
+ "manifests": "task/task_sequences_luna15",
+ "output_dirs": {
+  "free-text": "results/x/f",
+  "chunk-choice": "results/x/c",
+  "verbatim": "results/x/v"
+ },
+ "expected_model": {
+  "requested": "openrouter/openai/gpt-6-luna",
+  "response_model": "openai/gpt-6-luna",
+  "response_provider": "OpenAI",
+  "canonical_slug": "openai/gpt-6-luna-20260922"
+ },
+ "runs": [
+  {
+   "sequence": 1,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 1,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 1,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 2,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 2,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 2,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 3,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 3,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 3,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 4,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 4,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 4,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 5,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 5,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 5,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 6,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 7,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 8,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 9,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 10,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 11,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 12,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 12,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 12,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 13,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 13,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 13,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 14,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 14,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 14,
+   "arm": "chunk-choice"
+  },
+  {
+   "sequence": 15,
+   "arm": "verbatim"
+  },
+  {
+   "sequence": 15,
+   "arm": "free-text"
+  },
+  {
+   "sequence": 15,
+   "arm": "chunk-choice"
+  }
+ ]
+}

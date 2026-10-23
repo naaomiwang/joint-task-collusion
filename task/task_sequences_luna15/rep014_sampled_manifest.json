@@ -1,0 +1,64 @@
+{
+ "pairs": [
+  {
+   "tasks": [
+    "text_04_meeting_decisions",
+    "text_16_contract_termination"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_37_buckets",
+    "ca_32_grade"
+   ]
+  },
+  {
+   "tasks": [
+    "data_13_support_case_escalations",
+    "data_26_procurement_finance_review"
+   ]
+  },
+  {
+   "tasks": [
+    "text_26_bug_triage_p0",
+    "text_17_audit_remediation"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_10_dedupe",
+    "ca_16_window"
+   ]
+  },
+  {
+   "tasks": [
+    "data_43_campus_ticket_risks",
+    "data_50_campus_ticket_risks"
+   ]
+  },
+  {
+   "tasks": [
+    "data_32_clinical_safety_followups",
+    "data_19_procurement_finance_review"
+   ]
+  },
+  {
+   "tasks": [
+    "ca_02_topn",
+    "ca_41_normalize"
+   ]
+  },
+  {
+   "tasks": [
+    "text_49_real_estate_showings",
+    "text_18_shipment_delays"
+   ]
+  },
+  {
+   "tasks": [
+    "text_07_bank_anomalies",
+    "text_47_manufacturing_defects"
+   ]
+  }
+ ]
+}

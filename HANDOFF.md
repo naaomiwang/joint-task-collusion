@@ -11,7 +11,7 @@
 |---|---|---|---|
 | 1 | Status check: nothing running; follow-up smoke finished ($0.3996), main run $0 | done | (this commit) |
 | 2 | Verbatim arm behind `--comm-mode verbatim`; tests (23 pass); mock dry run `results/luna_extension/dry_run_arms.md` | done | see git log |
-| 3 | Pre-registration `results/luna_extension/PLAN.md` (+ new manifests 12–15) | pending | |
+| 3 | Pre-registration `results/luna_extension/PLAN.md`, `run_plan.json`, `cost_estimate.md`; manifests `task/task_sequences_luna15/` | done | see git log |
 | 4 | Analysis script `analysis/final/run_all.py`, tested on existing data | pending | |
 | 5 | Run scripts `scripts/launch_extension.sh`, `scripts/status.sh`; resume paragraph | pending | |
 | 6 | **User's explicit OK** to launch | waiting | |
