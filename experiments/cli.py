@@ -394,7 +394,8 @@ def _run_label(args: argparse.Namespace, run_index: int) -> str:
     if args.comm_mode != COMM_MODES[0]:
         suffixes.append(args.comm_mode)
     if args.answer_injection_seed is not None:
-        suffixes.append(f"answer-injection-{args.answer_injection_seed}")
+        # Short on purpose: run folder paths sit near Windows' 260-character limit.
+        suffixes.append(f"inj-{args.answer_injection_seed}")
     suffixes.append(f"memory-{args.cross_episode_memory_scope}")
     for agent_id in AGENT_IDS:
         max_episodes = getattr(args, f"{agent_id}_cross_episode_memory_length")
