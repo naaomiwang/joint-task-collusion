@@ -107,3 +107,9 @@ Hard cap **$24** across all attempts (including aborted partial runs). Estimate 
 
 - 2026-10-24, before any run: verbatim retry budget set to 2 retries (3 attempts) to match the
   free-text and chunk arms (was 3 retries); system prompts are now identical across arms.
+- 2026-10-24, after 3 of 33 runs (no outcomes inspected): the launcher had not pinned the
+  OpenRouter provider, unlike the sequence 6-11 launch (OpenAI, fallbacks off). The driver
+  stopped when sequence 1 verbatim showed 1/235 calls served by Azure (same model
+  openai/gpt-6-luna). Sequence 1 chunks (229/229 calls) and free text (258/258) were all
+  OpenAI. By the user's decision the three runs are kept, the Azure call is reported, and the
+  remaining 30 runs are pinned to OpenAI (OPENROUTER_PROVIDER_ORDER=OpenAI).

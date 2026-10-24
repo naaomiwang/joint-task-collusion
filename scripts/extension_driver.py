@@ -38,7 +38,9 @@ CONFIG = "configs/luna_free_text.yaml"  # same settings for every arm; --comm-mo
 EXPECTED_COST = {"free-text": 0.377, "chunk-choice": 0.807, "verbatim": 0.471}
 WORST_COST = {"free-text": 0.45, "chunk-choice": 0.95, "verbatim": 0.70}
 PY = sys.executable
-ENV = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
+# Pin every call to OpenRouter provider OpenAI, fallbacks off, as the sequence 6-11 runs were
+# launched (analysis/chunk_rerun/launch_model_pairs.sh: luna -> OpenAI).
+ENV = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENROUTER_PROVIDER_ORDER": "OpenAI"}
 
 
 def log(msg: str) -> None:
