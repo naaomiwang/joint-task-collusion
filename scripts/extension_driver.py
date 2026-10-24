@@ -121,7 +121,9 @@ def runner_command(run: dict) -> str:
 def model_ok(d: Path) -> bool:
     exp = PLAN["expected_model"]
     r = json.loads((d / "run.json").read_text(encoding="utf-8"))
-    seen = {(u.get("response_model"), u.get("response_provider")) for e in r["results"] for u in e.get("llm_usage", [])}
+    # Only calls that returned a response; failed attempts (retried by the harness) carry no model.
+    seen = {(u.get("response_model"), u.get("response_provider")) for e in r["results"] for u in e.get("llm_usage", [])
+            if u.get("response_status") == "accepted"}
     if seen != {(exp["response_model"], exp["response_provider"])}:
         log(f"model identity changed in {d.name[:60]}...: {sorted(seen, key=str)}")
         return False
