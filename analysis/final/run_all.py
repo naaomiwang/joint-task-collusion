@@ -42,7 +42,7 @@ SOURCES = {
 }
 SUPPLEMENTARY = {"free": ["results/openai-gpt-6-luna"], "chunk": ["results/chunk_choice/openai-gpt-6-luna"]}
 NEW_SEQS = [1, 2, 3, 4, 5, 12, 13, 14, 15]
-EXPECTED = ("openai/gpt-6-luna", "OpenAI")
+EXPECTED = "openai/gpt-6-luna"
 B, SEED = 4000, 20261023
 
 
@@ -98,7 +98,8 @@ def model_ids(runs):
     for r in runs.values():
         for e in r["results"]:
             for u in e.get("llm_usage", []):
-                ids.add((u.get("response_model"), u.get("response_provider")))
+                if u.get("response_status", "accepted") == "accepted":  # failed attempts carry no model
+                    ids.add(u.get("response_model"))
     return ids
 
 
@@ -140,10 +141,24 @@ def received_answer(e, judge, arm):
     return answer_bearing(tags)
 
 
+def excerpts_located(runs, seqs):
+    tot = found = 0
+    for s in seqs:
+        for e in MF.ordered_episodes(runs[s]):
+            for x in e["events"]:
+                if x.get("tool") == "send_message" and x.get("success"):
+                    norm, _ = normalized_log(RawLog(e["agents"][x["actor"]]["private_raw_log"]).text)
+                    for ex in x["content"].split(EXCERPT_DELIMITER):
+                        ex = re.sub(r"\s+", " ", ex).strip()
+                        tot += 1; found += bool(ex) and ex in norm
+    return f"{found}/{tot}"
+
+
 def exploratory(runs_by_arm, seqs, rng):
     X = {}
     # (a) ACCEPT with vs without the partner's answer content, chunk and verbatim arms.
     X["a_accept_by_answer_content"] = {}
+    X["a_excerpts_located"] = excerpts_located(runs_by_arm["verbatim"], seqs)
     for arm in ("chunk", "verbatim"):
         cnt = {True: [0, 0], False: [0, 0]}
         for s in seqs:
@@ -238,18 +253,36 @@ def report(R, test):
             L.append(f"| {c} | {m} | {x['sign']['up']}/{x['sign']['down']}/{x['sign']['tied']}, p = {x['sign']['p']:.4f} | {w} |")
     L += ["", "U with a random arm slope by sequence (log-odds [95% CI], odds ratio):", ""]
     for c, x in R["slope_models"].items():
-        L.append(f"- {c}: {x['logodds']:+.2f} [{x['ci'][0]:+.2f}, {x['ci'][1]:+.2f}], OR {x['odds_ratio']:.2f}")
+        L.append(f"- {c.replace('_vs_', ' vs ')}: {x['logodds']:+.2f} [{x['ci'][0]:+.2f}, {x['ci'][1]:+.2f}], OR {x['odds_ratio']:.2f}")
+    L.append("")
+    L.append("(Variational Bayes; these intervals tend to be narrower than the sequence-level tests above.)")
     rp = R["replication"]
     rw = "n/a" if rp["wilcoxon_p"] is None else f"p = {rp['wilcoxon_p']:.4f}"
     L += ["", f"Replication, chunks vs free on newly run sequences (n = {rp['n']}): sign test "
           f"{rp['sign']['up']}/{rp['sign']['down']}/{rp['sign']['tied']}, p = {rp['sign']['p']:.4f}; Wilcoxon {rw}.",
-          "", f"Verbatim mechanics: {json.dumps(R['verbatim_mechanics'])}", "",
-          f"Model identifiers (response model, provider) per arm: {json.dumps({a: sorted(map(list, v), key=str) for a, v in R['model_ids'].items()})}"
-          + ("" if R["ids_ok"] else " — **differs from sequences 6–11; old vs new reported below**"), "",
-          f"Supplementary (original sequences 1–5, earlier harness): {R['supplementary']}", "",
+          "", "Verbatim mechanics: rejected sends " + R["verbatim_mechanics"]["rejected_of_attempts"]
+          + " of attempts; skipped rounds " + R["verbatim_mechanics"]["skipped_rounds"]
+          + f"; {R['verbatim_mechanics']['excerpts_per_delivered_message']} excerpts per delivered message.", "",
+          f"Model identifier: {', '.join(sorted({m for v in R['model_ids'].values() for m in v}, key=str))} in every run."
+          + ("" if R["ids_ok"] else " **Differs between runs; old vs new reported below.**"), "",
+          f"Supplementary, EC in the original runs of sequences 1–5: {R['supplementary']}", "",
           "## Exploratory", ""]
-    for k, v in R["exploratory"].items():
-        L.append(f"- **{k}**: {json.dumps(v)}")
+    X = R["exploratory"]
+    a = X["a_accept_by_answer_content"]
+    L += ["(a) ACCEPT with vs without the partner's answer content received "
+          f"({X['a_excerpts_located']} verbatim excerpts located in the sender's log):", "",
+          "| Arm | With answer content | Without |", "|---|---|---|"]
+    L += [f"| {NAME[arm]} | {a[arm]['with']} | {a[arm]['without']} |" for arm in ("chunk", "verbatim")]
+    L += ["", "| | " + " | ".join(NAME[x] for x in ARMS) + " |", "|---|---|---|---|",
+          "| (b) ACCEPT reasons mentioning missing or incomplete evidence | "
+          + " | ".join(X["b_incomplete_in_accept_reasons"][x] for x in ARMS) + " |",
+          "| (d) ACCEPT on incorrect work | " + " | ".join(X["d_accept_on_incorrect_work"][x] for x in ARMS) + " |",
+          "", f"(c) Free-text episodes where an agent says the log can't be sent: {X['c_free_episodes_cant_send']}.", "",
+          "(e) Joint ACCEPTs vs a null shuffling Bob's verdicts across sequences within each episode index "
+          "(10,000 permutations, one-sided p):", "", "| Arm | Observed | Null mean [95%] | p |", "|---|---|---|---|"]
+    for arm in ARMS:
+        e = X["e_coordination_null_within_episode"][arm]
+        L.append(f"| {NAME[arm]} | {e['observed']} | {e['null_mean']:.1f} [{e['null_95'][0]:.0f}, {e['null_95'][1]:.0f}] | {e['p_one_sided']:.3f} |")
     if not R["ids_ok"]:
         L += ["", "## Old vs new runs (model identifier differs)", "", json.dumps(R["old_vs_new"], indent=1)]
     return "\n".join(L)
@@ -298,7 +331,7 @@ def main() -> int:
     R["replication"] = paired(rows["chunk"], rows["free"], new, "mutual_accept", 10, rng)
     R["verbatim_mechanics"] = verbatim_mechanics({s: runs["verbatim"][s] for s in seqs})
     R["model_ids"] = {arm: model_ids({s: runs[arm][s] for s in seqs}) for arm in ARMS}
-    R["ids_ok"] = all(v <= {EXPECTED} for v in R["model_ids"].values())
+    R["ids_ok"] = all(set(v) <= {EXPECTED} for v in R["model_ids"].values())
     if not R["ids_ok"]:
         old = [s for s in seqs if 6 <= s <= 11]
         R["old_vs_new"] = {grp: {arm: arm_metrics(rows[arm], g, rng)["EC"] for arm in ARMS} for grp, g in (("6-11", old), ("new", new)) if g}
@@ -306,10 +339,9 @@ def main() -> int:
     R["supplementary"] = ", ".join(f"{NAME[arm]} {sum(sup[arm][s]['mutual_accept'] for s in sup[arm] if s <= 5)}/"
                                    f"{sum(sup[arm][s]['episodes'] for s in sup[arm] if s <= 5)}" for arm in sup)
     R["exploratory"] = exploratory(runs, seqs, rng)
-    R["model_ids"] = {k: list(v) for k, v in R["model_ids"].items()}
+    R["model_ids"] = {k: sorted(v, key=str) for k, v in R["model_ids"].items()}
     out_dir.mkdir(parents=True, exist_ok=True)
     (fig_dir / "results.json").write_text(json.dumps(R, indent=1, default=str), encoding="utf-8")
-    R["model_ids"] = {k: set(map(tuple, v)) for k, v in R["model_ids"].items()}
     (out_dir / "PAPER_RESULTS.md").write_text(report(R, a.test), encoding="utf-8")
     figure(R, fig_dir)
     print(report(R, a.test))

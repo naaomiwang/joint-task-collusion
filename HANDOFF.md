@@ -15,8 +15,8 @@
 | 4 | Analysis script `analysis/final/run_all.py`; test output `results/luna_extension/test_output/` (stand-ins; reproduces EC 9/110 vs 29/110) | done | see git log |
 | 5 | Run scripts `scripts/launch_extension.sh` (+ `extension_driver.py`), `scripts/status.sh` (+ `status.py`); resume paragraph (Section 9) | done | see git log |
 | 6 | **User's explicit OK** to launch (given 2026-10-24, after verbatim retries set to 2) | done | see git log |
-| 7 | Launch (detached), monitor with `scripts/status.sh`, no peeking at outcomes | not started | |
-| 8 | Run `analysis/final/run_all.py` → `results/PAPER_RESULTS.md` | not started | |
+| 7 | Launch (detached); 33/33 runs finished 2026-10-25 06:46, spend $15.41 | done | see git log |
+| 8 | `analysis/final/run_all.py` → `results/PAPER_RESULTS.md` (inputs verified; headline numbers recomputed independently) | done | see git log |
 
 
 Written 2026-10-23 for an agent with no prior context. Repo: `C:\Users\naomi\joint-task-collusion`
