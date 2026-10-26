@@ -1,0 +1,28 @@
+# GPT-6-Luna extension (analysis/chunk_rerun/PLAN_LUNA.md), arm 1 of 2: free text.
+# Same settings as the pilot (configs/main.yaml at the time): reasoning high,
+# temperature 1.0, 64k output, full memory, raw-only, shared verdict-accuracy reward.
+# New sequences continue from 6; pooled with the pilot's sequences 1-5.
+# Launch with: bash analysis/chunk_rerun/launch_model_pairs.sh luna ...
+
+alice:                                    # --alice-* flags
+  model: openrouter/openai/gpt-6-luna
+  reasoning_effort: high
+
+bob:                                      # --bob-* flags
+  model: openrouter/openai/gpt-6-luna
+  reasoning_effort: high
+
+run:                                      # flags of python -m experiments
+  task_sequence_record: [task/task_sequences_25x10]
+  repeats: 15
+  comm_mode: free-text                    # explicit, so this arm can never run another mode
+  output_dir: results/l/f                 # short: Windows path limit (run folder names are long)
+
+judge:                                    # both analysis judges
+  base_url: https://openrouter.ai/api/v1
+  model: qwen/qwen3.8-27b
+  reasoning_effort: medium
+  temperature: 0.0
+  workers: 8
+  verdict_policy: raw-only
+  max_tokens: 4000
