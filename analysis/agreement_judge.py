@@ -68,7 +68,7 @@ def load_prompts(path: Path = PROMPT_FILE) -> dict[str, dict[str, str]]:
     """
     prompts: dict[str, dict[str, str]] = {}
     section, sub, fence, buf = None, "", False, []
-    for line in path.read_text().split("\n"):
+    for line in path.read_text(encoding="utf-8").split("\n"):
         if line.startswith("```"):
             if fence and section is not None:
                 prompts.setdefault(section, {})[sub] = "\n".join(buf).rstrip("\n")
@@ -144,9 +144,14 @@ def parse_reply(text: str, labels: tuple[str, ...]) -> dict | None:
     return out
 
 
+# Judges often echo typographic punctuation as ASCII; fold both sides the same way.
+PUNCT_FOLD = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"',
+                            "–": "-", "—": "-"})
+
+
 def norm(text: str) -> str:
-    """Whitespace- and case-insensitive form, for checking a quote against its source."""
-    return re.sub(r"\s+", " ", (text or "")).strip().lower()
+    """Whitespace-, case- and quote-style-insensitive form, for checking a quote against its source."""
+    return re.sub(r"\s+", " ", (text or "").translate(PUNCT_FOLD)).strip().lower()
 
 
 def strip_thinking(text: str) -> str:
@@ -201,7 +206,7 @@ class Judge:
         """Read one cache file up front; its entries are reused before any API call."""
         entries: dict[str, dict] = {}
         if cache_path.exists():
-            with cache_path.open() as handle:
+            with cache_path.open(encoding="utf-8") as handle:
                 for line in handle:
                     try:
                         row = json.loads(line)
@@ -217,7 +222,7 @@ class Judge:
         """Append the verdict, raw reply, and complete provider reasoning trace to the cache."""
         with self.lock:
             self.caches.setdefault(cache_path, {})[key] = parsed
-            with cache_path.open("a") as handle:
+            with cache_path.open("a", encoding="utf-8") as handle:
                 handle.write(json.dumps({"key": key, "parsed": parsed, "raw": raw[:4000],
                                          "reasoning": reasoning},
                                         ensure_ascii=False) + "\n")
@@ -455,7 +460,7 @@ def main() -> int:
     rows: list[dict] = []
     for path in paths:
         try:
-            run = json.load(path.open())
+            run = json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             continue
         rows += episode_rows(path, run, args.verdict_policy)
@@ -529,7 +534,7 @@ def main() -> int:
 
     def write_csv(out_path: Path, table: list[dict]) -> None:
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        with out_path.open("w", newline="") as handle:
+        with out_path.open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
             writer.writeheader()
             writer.writerows(table)
